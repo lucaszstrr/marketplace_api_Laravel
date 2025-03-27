@@ -1,75 +1,68 @@
-# Projeto Laravel com Docker
+# Laravel Project - Motorcycle Shop API
 
-## Acesso ao phpMyAdmin
+## Accessing phpMyAdmin
 
-Com o Docker rodando, é possível acessar o phpMyAdmin pelo link:
+With Docker running, you can access phpMyAdmin using the link:
 
 - [http://localhost:8075](http://localhost:8075)
 
-**Usuário:** `root`  
-**Senha:** `root`
+**User:** `root`  
+**Password:** `root`
 
-## Acesso ao Backend
+## Accessing the Backend
 
-A URL base para acessar o backend é:
+The base URL to access the backend is:
 
 - [http://localhost:8005/api](http://localhost:8005/api)
 
-## Instruções de Uso
+## Usage Instructions
 
-### Subir o Container
+### Starting the Container
 
-Para iniciar o container, execute o comando:
+To start the container, run the following command:
 
 ```bash
 docker compose up --build -d
 ```
 
-### Configuração Inicial
+### Initial Configuration
 
-1. **Criar o arquivo `.env`:**  
-   Copie o conteúdo do arquivo `.env.example` para um novo arquivo `.env` dentro da pasta `/src`.
+1. **Create the `.env` file:**  
+   Copy the contents of the `.env.example` file into a new `.env` file inside the `/src` folder.
 
-2. **Abrir o terminal dentro do Docker:**  
-   Execute o comando abaixo para acessar o terminal do container:
+2. **Open the terminal inside the Docker container:**  
+   Run the following command to access the container terminal:
    
    ```bash
    docker compose exec --user 1000:1000 php sh
    ```
    
-3. **Instalar as dependências:**  
-   Dentro do terminal do Docker, digite o seguinte comando para instalar as dependências:
+3. **Install dependencies:**  
+   Inside the Docker terminal, run the following command to install dependencies:
    
    ```bash
    composer update
    ```
 
-4. **Gerar a chave da aplicação:**  
-   Ainda dentro do terminal do Docker, execute:
+4. **Generate the application key:**  
+   Still inside the Docker terminal, run:
    
    ```bash
    php artisan key:generate
    ```
 
-5. **Rodar as migrações:**  
-   No mesmo terminal, execute:
+5. **Run the migrations:**  
+   In the same terminal, run:
    
    ```bash
    php artisan migrate
    ```
 
-## Observações Importantes
+## Important Notes
 
-- Sempre execute os comandos do Docker na mesma pasta onde está localizado o arquivo `docker-compose.yml` (pasta raiz).
-- Para executar comandos do Laravel é necessário acessar o terminal do container. Para isso, execute o comando:
-  
+- Always run Docker commands in the same folder where the `docker-compose.yml` file is located (root folder).
+- To run Laravel commands, you need to access the container terminal. For that, run the command:
+
   ```bash
   docker compose exec --user 1000:1000 php sh
   ```
-
-## Dicas para Usuários Windows
-
-- Não use no Windows, php não gosta de Windows.
-- Se for utilizar, recomendo o uso do [Laragon](https://laragon.org/). Nos quatro primeiros vídeos desta [playlist](https://www.youtube.com/playlist?list=PLwXQLZ3FdTVH5Tb57_-ll_r0VhNz9RrXb) há um tutorial de como configurá-lo. Existem também outras opções, como o [Windows Subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/install-win10), porém o WSL tem um certo delay.
-
----
