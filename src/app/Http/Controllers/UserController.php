@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth as FacadesAuth;
 
 class UserController extends Controller
 {
@@ -28,20 +31,60 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
+        // $user = User::findOrFail($id);
+        // FacadesAuth::login($user);
+
         $user = $request->validate([
             'name' => 'required | string',
-            'email' => 'required | string',
-            'password' => 'required | string',
-            'role' => 'required | string'
+            'email' => 'required | email',
+            'password' => 'required | string'
         ]);
 
         $user = User::create($user);
-
 
         return response()->json([
             'message' => 'User created',
             $user
         ]);
+    }
+
+    public function login(Request $request){
+
+        $validateLogin = $request->validate([
+            'email' => 'required | email',
+            'password' => 'required | string'
+        ]);
+
+        //Tenta procurar o email passado, ele verifica na tabela users na coluna email
+        $user = User::where('email', $validateLogin['email'])->first();
+
+        //Se o usuario nao for encontrado irá aparecer um erro
+        if(!$user){
+            return response()->json([
+                "error" => "Unknown credentials",
+                "message" => "Unknown credentials"
+            ]);
+        }
+
+        //Aqui e feita uma comparacao da senha que foi passada com a senha do bd
+        //O Hash::check verifica se a senha em texto puro bate com a senha hasheada
+        if(!Hash::check($request->password, $user->password)){
+            return response()->json([
+                "error" => "Unknown credentials",
+                "message" => "Unknown credentials"
+            ], 401);
+        }
+
+        //Aqui é criado um token de acesso para o usuario com a funcao createToken
+        $token = $user->createToken('token')->plainTextToken;
+
+        //Response dizendo que deu tudo certo
+        return response()->json([
+            "message" => "Login successfully",
+            "user" => $user,
+            "token" => $token
+        ], 200);
+
     }
 
     /**
