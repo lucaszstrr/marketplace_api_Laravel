@@ -31,9 +31,7 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        // $user = User::findOrFail($id);
-        // FacadesAuth::login($user);
-
+        
         $user = $request->validate([
             'name' => 'required | string',
             'email' => 'required | email',
