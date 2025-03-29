@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Auth as FacadesAuth;
+use Illuminate\Support\Facades\Auth;
+
 
 class UserController extends Controller
 {
@@ -104,9 +104,49 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request)
     {
-        //
+        //Pega o usuario que esta logado
+        $userLogged = Auth::user();
+
+        //Pega o tipo do usuario logado(se é user, admin ou moderator)
+        $userType = $userLogged->role;
+
+        $updateUser = $request->validate([
+            'email' => 'required | email',
+            'role' => 'required | in:admin,moderator,user'
+        ]);
+
+        //Verifica se o user logado é um user
+        if($userType == "user" || $userType == "moderator"){
+            return response()->json([
+                "error" => "Logged user must be an admin"
+            ]);
+        }
+
+        //Procura o email passado no request na tabela user no bd
+        $targetUser = User::where("email", $updateUser['email'])->first();
+
+        if(!$targetUser){
+            return response()->json([
+                "error" => "User not found",
+                "message" => "User not found"
+            ]);
+        }
+
+        //Atualiza o usuário que foi passado
+        $targetUser->role = $updateUser['role'];
+        $targetUser->save();
+
+        //Isso pega o nome do user que vamos alterar
+        $userName = $targetUser->name;
+
+        //Isso pega o tipo do user que vamos alterar
+        $targetUserRole = $updateUser['role'];
+
+        return response()->json([
+            "message" => "Job title from user $userName updated to $targetUserRole",
+        ], 200);
     }
 
     /**
