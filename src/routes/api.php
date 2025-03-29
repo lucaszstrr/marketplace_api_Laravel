@@ -17,8 +17,10 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/teste', [AddressController::class, 'index']);
+    //Rota para adicionar endereco
     Route::post('/address', [AddressController::class, 'store']);
+    //Rota para atualizar o role de usuarios
+    Route::post('/updatetitle', [UserController::class, 'update']);
 });
 
 //Rota para criar user
