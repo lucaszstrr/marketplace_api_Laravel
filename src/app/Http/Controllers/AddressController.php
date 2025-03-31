@@ -78,12 +78,36 @@ class AddressController extends Controller
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+
+    public function update(Request $request)
     {
-        //
+        $userLogged = Auth::user();
+
+        if(!$userLogged){
+            return response()->json([
+                "error" => "There's not user logged",
+                "message" => "There's not user logged"
+            ], 400);
+        }
+
+        $userId = $userLogged->id;
+
+        $updateAddress = $request->validate([
+            'street' => 'required | string',
+            'number' => 'required | integer',
+            'zip' => 'required | string',
+            'city' => 'required | string',
+            'state' => 'required | string',
+            'country' => 'required | string',
+        ]);
+
+ //       $addressId = Address::where('id', $userId)->first();
+
+        
+
+        return response()->json([
+ //         $addressId
+        ]);
     }
 
     /**
