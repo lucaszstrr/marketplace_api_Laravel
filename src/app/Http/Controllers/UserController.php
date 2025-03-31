@@ -88,9 +88,52 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show()
     {
-        //
+        $userLogged = Auth::user();
+
+        $userRole = $userLogged->role;
+
+        if($userRole == 'user'){
+            return response()->json([
+                'error'=> 'Only admins and moderator can access this information',
+                'message'=> 'Only admins and moderator can access this information'
+            ], 400);
+        }
+
+        $user = User::all();
+
+        return response()->json([
+            $user
+        ]);
+    }
+
+    public function showId(string $id){
+        
+        $userLogged = Auth::user();
+
+        $userRole = $userLogged->role;
+
+        if($userRole == 'user'){
+            return response()->json([
+                'error'=> 'Only admins and moderator can access this information',
+                'message'=> 'Only admins and moderator can access this information'
+            ], 400);
+        }
+
+        $user = User::find($id);
+
+        if(!$user){
+            return response()->json([
+                "error"=> "This user doesn't exists",
+                "message"=> "This user doesn't exists"
+            ],404);
+        }
+
+        return response()->json([
+            $user
+        ], 200);
+
     }
 
     /**
