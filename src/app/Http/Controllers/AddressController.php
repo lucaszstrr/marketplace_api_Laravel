@@ -62,37 +62,47 @@ class AddressController extends Controller
         ]);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show()
     {
-        //
+        $userId = Auth::id();
+
+        $address = Address::where('userId', $userId)->get();
+
+        return response()->json([
+            $address
+        ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
+    public function showSpecific(string $id)
+    {
+        $userId = Auth::id();
+
+        $address = Address::findOrFail($id);
+
+        if($userId != $address->userId){
+            return response()->json([
+                "error" => "This address doesnt belongs to user logged",
+                "message" => "This address doesnt belongs to user logged"
+            ], 401);
+        }
+
+        return response()->json([
+            $address
+        ]);
+    }
+
     public function edit(string $id)
     {
         //
     }
 
 
-    public function update(Request $request)
+    public function update(Request $request, string $id)
     {
-        $userLogged = Auth::user();
+        //Pega o id do user logado
+        $userLogged = Auth::id();
 
-        if(!$userLogged){
-            return response()->json([
-                "error" => "There's not user logged",
-                "message" => "There's not user logged"
-            ], 400);
-        }
-
-        $userId = $userLogged->id;
-
-        $updateAddress = $request->validate([
+        $validateAddress = $request->validate([
             'street' => 'required | string',
             'number' => 'required | integer',
             'zip' => 'required | string',
@@ -101,12 +111,20 @@ class AddressController extends Controller
             'country' => 'required | string',
         ]);
 
- //       $addressId = Address::where('id', $userId)->first();
+        $address = Address::findOrFail($id);
 
-        
+        if($address->userId != $userLogged){
+            return response()->json([
+                'error'=> 'You are not the owner of this address',
+                'message'=> 'You are not the owner of this address'
+            ]);
+        }
+
+        $address->update($validateAddress);
 
         return response()->json([
- //         $addressId
+            "message" => "Address updated succesfully",
+            $address
         ]);
     }
 
