@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Address;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -190,6 +191,57 @@ class UserController extends Controller
         return response()->json([
             "message" => "Job title from user $userName updated to $targetUserRole",
         ], 200);
+    }
+
+    public function updateUserLogged(Request $request)
+    {
+        //Validacao do id user
+        $user = User::findOrFail(Auth::id());
+
+        $validateUser = $request->validate([
+            'name' => 'required | string',
+            'email' => 'required | email',
+            'password' => 'required | string',
+        ]);
+
+        $user->update($validateUser);
+
+        return response()->json([
+            "message" => "User updated succesfully",
+            $validateUser
+        ], 200);
+    }
+
+    public function userDelete()
+    {
+        //Valida o id do user logado
+        $user = User::findOrFail(Auth::id());
+
+        //Valida o user
+        $userLogged = Auth::user();
+
+        $userName = $userLogged->name;
+
+        $user->delete();
+
+        return response()->json([
+            "message"=> "User $userName was deleted succesfully",
+        ],200);
+    }
+
+    public function profile()
+    {
+        $userLogged = Auth::user();
+
+        $userId = $userLogged->id;
+
+        $addresses = Address::where("userId", $userId)->get();
+
+        return response()->json([
+            $userLogged,
+            "Addresses below",
+            $addresses
+        ]);
     }
 
     /**
