@@ -24,4 +24,8 @@ class Address extends Model
     public function user(){
         return $this->has(User::class);
     }
+
+    public function order(){
+        return $this->has(Order::class);
+    }
 }
