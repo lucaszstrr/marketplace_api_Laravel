@@ -14,7 +14,10 @@ class AddressController extends Controller
     public function index()
     {
         $user = Auth::user();
-        return response()->json([$user]);
+        
+        return response()->json([
+            $user
+        ]);
     }
 
     /**
@@ -82,7 +85,6 @@ class AddressController extends Controller
         if($userId != $address->userId){
             return response()->json([
                 "error" => "This address doesnt belongs to user logged",
-                "message" => "This address doesnt belongs to user logged"
             ], 401);
         }
 
