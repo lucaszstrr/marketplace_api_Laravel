@@ -62,6 +62,21 @@ class OrderController extends Controller
             $totalAmount += $item['quantity'] * $item['unitPrice'];
         }
 
+
+        //Se o usuraio nao informar o cupom ele já irá criar o order
+        if($request->couponId == null || $request->couponId == ""){
+            $order = Order::create([
+                "userId" => $userId,
+                "addressId" => $userAddress['id'],
+                "totalAmount" => $totalAmount
+            ]);
+
+            return response()->json([
+                "message" => "Order created",
+                $order
+            ]);
+        }
+
         $foundCoupon = Coupon::where('id', $request->couponId)->first();
 
         if($foundCoupon){
@@ -71,6 +86,7 @@ class OrderController extends Controller
 
             $totalAmount -= $discount;  
         }
+
 
         $order = Order::create([
             "userId" => $userId,
@@ -86,12 +102,97 @@ class OrderController extends Controller
         ]);
     }
 
+    public function delete(string $id)
+    {
+        $userLogged = Auth::user();
+
+        $userId = $userLogged->id;
+
+        $order = Order::where('userId', $userId)->get();
+
+        $orderId = [];
+
+        foreach($order as $item){
+            $orderId[] = $item->id;
+        }
+
+        if(!in_array($id, $orderId)){
+            return response()->json([
+                "error" => "Invalid order"
+            ], 401);
+        }
+
+        $order->delete();
+
+        return response()->json([
+            "message" => "Order deleted succesfully"
+        ], 200);
+    }
+
+
+    public function updateStatus(Request $request, string $id)
+    {
+        $userLogged = Auth::user();
+
+        $userId = $userLogged->id;
+
+        if($userLogged->role != "moderator"){
+            return response()->json([
+                "error" => "Only moderators can update order status"
+            ]);
+        }
+
+        $order = Order::findOrFail($id, 'id')->first();
+
+        $request->validate([
+            "status" => "required | in:pending,processing,shipped,completed,canceled"
+        ]);
+
+        $order->update([
+            "status" => $request->status
+        ]);
+
+        $order->save();
+
+        return response()->json([
+            "message" => "Status updated",
+            $order
+        ]);
+    }
+
     /**
      * Display the specified resource.
      */
     public function show(Order $order)
     {
-        //
+        $userLogged = Auth::user();
+
+        $userId = $userLogged->id;
+
+        $order = Order::where("userId", $userId)->first();
+
+        return response()->json([
+            $order
+        ]);
+    }
+
+    public function showAll()
+    {
+        $userLogged = Auth::user();
+
+        $userId = $userLogged->id;
+
+        if($userLogged->role == "user"){
+            return response()->json([
+                "error" => "Users can't access this information"
+            ]);
+        }
+
+        $order = Order::all();
+
+        return response()->json([
+            $order
+        ]);
     }
 
     /**
