@@ -80,7 +80,6 @@ class CartItemController extends Controller
             "unitPrice" => $products['price']
         ]);
 
-
         return response()->json([
             "message" => "Product added to cart",
             $cart
@@ -92,7 +91,31 @@ class CartItemController extends Controller
      */
     public function show(CartItem $cartItem)
     {
-        //
+        $userLogged = Auth::user();
+
+        $userId = $userLogged->id;
+
+        $cart = Cart::where('userId', $userId)->first();
+
+        $cartItem = CartItem::where("cartId", $cart->id)->get();
+
+        return response()->json([
+            $cartItem
+        ], 200);
+    }
+
+
+    public function showCart()
+    {
+        $userLogged = Auth::user();
+
+        $userId = $userLogged->id;
+
+        $cart = Cart::where("userId", $userId)->first();
+
+        return response()->json([
+            $cart
+        ]);
     }
 
     /**
@@ -108,7 +131,61 @@ class CartItemController extends Controller
      */
     public function update(Request $request, CartItem $cartItem)
     {
-        //
+        $userLogged = Auth::user();
+
+        $userId = $userLogged->id;
+
+        $cart = Cart::where("userId", $userId)->first();
+
+        $cartItem = CartItem::where("cartId", $cart->id)->get();
+
+        $validateCart = $request->validate([
+            "id" => "required | integer",
+            "quantity" => "required | integer"
+        ]);
+
+        $selectedItem = CartItem::find($validateCart['id']);
+
+        $selectedItem->update([
+            "quantity" => $validateCart['quantity']
+        ]);
+
+        return response()->json([
+            "message" => "Quantity updated",
+            $selectedItem
+        ], 200);
+    }
+
+    public function delete(string $id)
+    {
+        $userLogged = Auth::user();
+
+        $userId = $userLogged->id;
+
+        $cart = Cart::where("userId", $userId)->first();
+
+        $cartItems = CartItem::where("cartId", $cart->id)->get();
+
+        $itemId = [];
+
+        foreach($cartItems as $item){
+            $itemId[] = $item->id;
+        }
+
+        if(!in_array($id, $itemId)){
+            return response()->json([
+                "error" => "Invalid item"
+            ], 401);
+        }
+
+        $selectedItem = CartItem::findOrFail($id);
+
+        $selectedItem->delete();
+
+        return response()->json([
+            "message" => "Item deleted from cart",
+            $selectedItem
+        ]);
     }
 
     /**
