@@ -50,25 +50,12 @@ class OrderController extends Controller
             ]);
         }
 
-        $user = User::findOrFail($userId);
+        $foundCoupon = Coupon::where('id', $request->couponId)->first();
 
-        //Isso puxa os itens do carrinho do usuario logado
-        $userCart = $user->cart->cartItems;
-
-        $totalAmount = 0;
-
-        //Isso percorre cada item do cart e faz a soma dos valores dos produtos
-        foreach($userCart as $item){
-            $totalAmount += $item['quantity'] * $item['unitPrice'];
-        }
-
-
-        //Se o usuraio nao informar o cupom ele já irá criar o order
-        if($request->couponId == null || $request->couponId == ""){
+        if(!$foundCoupon){
             $order = Order::create([
                 "userId" => $userId,
-                "addressId" => $userAddress['id'],
-                "totalAmount" => $totalAmount
+                "addressId" => $userAddress['id']
             ]);
 
             return response()->json([
@@ -77,29 +64,17 @@ class OrderController extends Controller
             ]);
         }
 
-        $foundCoupon = Coupon::where('id', $request->couponId)->first();
-
-        if($foundCoupon){
-            $percentage = $foundCoupon['discountPercentage'];
-
-            $discount = ($totalAmount * $percentage) / 100;
-
-            $totalAmount -= $discount;  
-        }
-
-
         $order = Order::create([
             "userId" => $userId,
             "addressId" => $userAddress['id'],
-            "couponId" => $foundCoupon['id'],
-            "totalAmount" => $totalAmount
+            "couponId" => $foundCoupon['id']
         ]);
-
 
         return response()->json([
             "message" => "Order created",
             $order
         ]);
+
     }
 
     public function delete(string $id)
@@ -125,7 +100,8 @@ class OrderController extends Controller
         $order->delete();
 
         return response()->json([
-            "message" => "Order deleted succesfully"
+            "message" => "Order deleted succesfully",
+            $order
         ], 200);
     }
 
