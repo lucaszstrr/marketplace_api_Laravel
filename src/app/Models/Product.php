@@ -14,6 +14,7 @@ class Product extends Model
         'name', 
         'stock',
         'price',
+        'coupon',
     ];
 
     public function category(){
