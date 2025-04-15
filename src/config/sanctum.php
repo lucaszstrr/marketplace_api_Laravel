@@ -46,8 +46,8 @@ return [
     |
     */
 
-    //Expiração de 48 horas 
-    'expiration' => 2880,
+    //Expiração de 48 horas = 2880 minutos
+    'expiration' => null,
 
     /*
     |--------------------------------------------------------------------------
