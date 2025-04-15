@@ -20,7 +20,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/address/{id}', [AddressController::class, 'update']);
         Route::get('/addresses', [AddressController::class, 'show']);
         Route::get('/addresses/{id}', [AddressController::class, 'showSpecific']);
-
+        Route::delete('/address/{id}', [AddressController::class, 'delete']);
 
 
     //USUARIOS
@@ -74,6 +74,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/coupon', [CouponController::class, 'show']);
         Route::get('/coupon/{id}', [CouponController::class, 'showSpecific']);
         Route::delete('/coupon/{id}', [CouponController::class, 'delete']);
+
 
 });
 
