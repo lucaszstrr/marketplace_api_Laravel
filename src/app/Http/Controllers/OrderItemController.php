@@ -14,25 +14,6 @@ use Illuminate\Support\Facades\Auth;
 
 class OrderItemController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $userLogged = Auth::user();
@@ -64,39 +45,107 @@ class OrderItemController extends Controller
         //Puxa o produto da tabela products
         $product = Product::where("id", $selectedItem->productId)->first();
 
+        
+        if($product->coupon == 0){
 
-        $totalAmount = 0;
+            $totalAmount = 0;
 
-        $itemQuantity = $selectedItem->quantity;
+            $order = $user->order;
 
-        $itemPrice = $selectedItem->unitPrice;
+            $itemQuantity = $selectedItem->quantity;
 
-        $totalAmount += $itemQuantity * $itemPrice;
+            $itemPrice = $selectedItem->unitPrice;
 
-        //Puxa o order do usuario
-        $order = $user->order;
+            $totalAmount += $itemQuantity * $itemPrice;
 
-        $order->totalAmount += $totalAmount;
+            $order->totalAmount += $totalAmount;
 
-        $order->save();
+            $order->save();
 
-        $orderItem = OrderItem::create([
-            "orderId" => $order->id,
-            "productId" => $product->id,
-            "quantity"=> $selectedItem->quantity,
-            "unitPrice" => $selectedItem->unitPrice,
-        ]);
+            
+            $orderItem = OrderItem::create([
+                "orderId" => $order->id,
+                "productId" => $product->id,
+                "quantity"=> $selectedItem->quantity,
+                "unitPrice" => $selectedItem->unitPrice,
+            ]);
 
-        return response()->json([
-            "message" => "Product added to order",
-            $product->name,
-            $product->price
-        ],200);
+            return response()->json([
+                "message" => "Product added to order",
+                $product->name,
+                $product->price
+            ],200);
+
+        }elseif($product->coupon == 1){
+    
+            $order = $user->order;
+
+            $totalAmount = 0;
+
+            $itemQuantity = $selectedItem->quantity;
+
+            $itemPrice = $selectedItem->unitPrice;
+
+            $foundCoupon = Coupon::where("id", $order->couponId)->first();
+
+            if($foundCoupon == null){
+                $totalAmount = 0;
+
+                $order = $user->order;
+
+                $itemQuantity = $selectedItem->quantity;
+
+                $itemPrice = $selectedItem->unitPrice;
+
+                $totalAmount += $itemQuantity * $itemPrice;
+
+                $order->totalAmount += $totalAmount;
+
+                $order->save();
+
+
+                $orderItem = OrderItem::create([
+                    "orderId" => $order->id,
+                    "productId" => $product->id,
+                    "quantity"=> $selectedItem->quantity,
+                    "unitPrice" => $selectedItem->unitPrice,
+                ]);
+
+                return response()->json([
+                    "message" => "Product added to order",
+                    $product->name,
+                    $product->price
+                ],200);
+            }
+
+            $discountFloat = $foundCoupon->discountPercentage / 100;
+
+            $discount = $itemPrice * $discountFloat;
+
+            $discountedPrice = $itemPrice - $discount;
+
+            $totalAmount += $itemQuantity * $discountedPrice;
+
+            $order->totalAmount += $totalAmount;
+
+            $order->save();
+
+            
+            $orderItem = OrderItem::create([
+                "orderId" => $order->id,
+                "productId" => $product->id,
+                "quantity"=> $selectedItem->quantity,
+                "unitPrice" => $selectedItem->unitPrice,
+            ]);
+
+            return response()->json([
+                "message" => "Product added to order",
+                $product->name,
+                $product->price
+            ],200);
+        }
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show()
     {
         $userLogged = Auth::user();
@@ -133,32 +182,11 @@ class OrderItemController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(OrderItem $orderItem)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, OrderItem $orderItem)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
     public function delete(string $id)
     {
         $userLogged = Auth::user();
 
         $userId = $userLogged->id;
-
-        $user = User::findOrFail($userId);
 
         //Isso puxa a order do usuario logado
         $order = Order::where("userId", $userId)->first();
@@ -166,11 +194,9 @@ class OrderItemController extends Controller
         //Isso puxa os itens do pedido do usuário logado
         $orderItems = OrderItem::where("orderId", $order->id)->get();
 
-        $itemId = [];
-
         //Percorre os itens do pedido e armazena os id's em um array
         foreach($orderItems as $item){
-            $itemId[] += $item->id;
+            $itemId[] = $item->id;
         }
 
         if(!in_array($id, $itemId)){
@@ -179,44 +205,61 @@ class OrderItemController extends Controller
             ]);
         }
 
-        $orderId = OrderItem::find($id);
+        $selectedOrderItem = OrderItem::find($id);
 
-        $order->totalAmount -= $orderId->unitPrice;
+        $product = Product::find($selectedOrderItem->productId);
+
+        //se o produto aceita cupom e se na order->couponId não for nulo
+        if($product->coupon == 1 && $order->couponId != null){
+
+            //acha o cupom na table order
+            $foundCoupon = Coupon::where("id", $order->couponId)->first();
+
+            $itemPrice = $selectedOrderItem->unitPrice;
+
+            $discountFloat = $foundCoupon->discountPercentage / 100;
+
+            $discount = $itemPrice * $discountFloat;
+
+            $discountedPrice = $itemPrice - $discount;
+            
+            $order->totalAmount -= $discountedPrice;
+
+            foreach($orderItems as $item){
+                $orderId[] = $item->id;
+            }
+
+            if(count($orderId) == 1){
+                $order->totalAmount == null;
+                $order->save();
+            }
+        
+            $order->save();
+
+            $selectedOrderItem->delete();
+            
+            return response()->json([
+                "message" => "Item deleted succesfully"
+            ], 200);
+        }
+
+        $order->totalAmount -= $selectedOrderItem->unitPrice;
+
+        foreach($orderItems as $item){
+            $orderId[] = $item->id;
+        }
+        
+        if(count($orderId) == 1){
+            $order->totalAmount == null;
+            $order->save();
+        }
+
         $order->save();
         
-        $orderId->delete();
+        $selectedOrderItem->delete();
 
         return response()->json([
             "message" => "Item deleted succesfully"
         ], 200);
     }
 }
-
-
-
-
-
-// $foundCoupon = Coupon::where('id', $order->couponId)->first();
-
-// if(!$foundCoupon){
-//     $order->save();
-
-//     $orderItem = OrderItem::create([
-//         "orderId" => $order->id,
-//         "productId" => $product->id,
-//         "quantity"=> $selectedItem->quantity,
-//         "unitPrice" => $selectedItem->unitPrice,
-//     ]);
-
-//     return response()->json([
-//         "message" => "Product added to order",
-//         $product->name,
-//         $product->price
-//     ],200);
-// }
-
-// $discount = $foundCoupon->discountPercentage / 100;
-
-// $discountPrice = $order->totalAmount * $discount;
-
-// $order->totalAmount -= $discountPrice;
