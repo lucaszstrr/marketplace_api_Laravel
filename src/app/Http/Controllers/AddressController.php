@@ -8,9 +8,6 @@ use Illuminate\Support\Facades\Auth;
 
 class AddressController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         $user = Auth::user();
@@ -20,17 +17,6 @@ class AddressController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         //Essa funcao vai verificar qual user está logado
@@ -93,12 +79,6 @@ class AddressController extends Controller
         ]);
     }
 
-    public function edit(string $id)
-    {
-        //
-    }
-
-
     public function update(Request $request, string $id)
     {
         //Pega o id do user logado
@@ -130,11 +110,33 @@ class AddressController extends Controller
         ]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function delete(string $id)
     {
-        //
+        $userLogged = Auth::user();
+
+        $userId = $userLogged->id;
+
+        $addresses = Address::where("userId", $userId)->get();
+
+        $addressIds = [];
+
+        foreach($addresses as $address){
+            $addressIds[] = $address->id;
+        }
+
+        if(!in_array($id, $addressIds)){
+            return response()->json([
+                "error" => "You cant delete this address"
+            ], 401);
+        }
+
+        $selectedAddress = Address::find($id);
+
+        $selectedAddress->delete();
+
+        return response()->json([
+            "message" => "Address deleted",
+            $selectedAddress
+        ]);
     }
 }
