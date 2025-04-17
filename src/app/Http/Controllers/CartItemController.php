@@ -10,17 +10,6 @@ use Illuminate\Support\Facades\Auth;
 
 class CartItemController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
 
@@ -42,12 +31,8 @@ class CartItemController extends Controller
             "message" => "Cart created succesfully",
             "cart" => $user
         ]);
-
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $userId = Auth::id();
@@ -65,19 +50,28 @@ class CartItemController extends Controller
             'quantity' => 'required | integer',
         ]);
 
-        $products = Product::find($validateItems['productId']);
+        $product = Product::find($validateItems['productId']);
 
-        if(!$products){
+        if(!$product){
             return response()->json([
                 'error'=> 'Product not found'
             ]);
         }
 
+        if($validateItems['quantity'] > $product->stock){
+            return response()->json([
+                "error" => "Can't add this quantity of products"
+            ], 401);
+        }
+
+        $product->stock -= $validateItems['quantity'];
+        $product->save();
+
         $cart = CartItem::create([
             "cartId" => $userCart['id'],
             "productId" => $validateItems['productId'],
             "quantity" => $validateItems['quantity'],
-            "unitPrice" => $products['price']
+            "unitPrice" => $product['price']
         ]);
 
         return response()->json([
@@ -86,9 +80,6 @@ class CartItemController extends Controller
         ]);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(CartItem $cartItem)
     {
         $userLogged = Auth::user();
@@ -118,17 +109,6 @@ class CartItemController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(CartItem $cartItem)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, CartItem $cartItem)
     {
         $userLogged = Auth::user();
@@ -178,7 +158,12 @@ class CartItemController extends Controller
             ], 401);
         }
 
+        $product = Product::find($id);
+
         $selectedItem = CartItem::findOrFail($id);
+
+        $product->stock += $selectedItem->quantity;
+        $product->save();
 
         $selectedItem->delete();
 
@@ -188,11 +173,37 @@ class CartItemController extends Controller
         ]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(CartItem $cartItem)
+    public function clearCart()
     {
-        //
+        $userLogged = Auth::user();
+
+        $userId = $userLogged->id;
+
+        $cart = Cart::where("userId", $userId)->first();
+
+        $cartItems = CartItem::where("cartId", $cart->id)->get();
+
+        $productIds = [];
+
+        foreach($cartItems as $item){
+            $productIds[] = $item->productId;
+        }
+
+        foreach($productIds as $productId){
+            $product = Product::find($productId);
+            
+            $product->stock += $item->quantity;
+            
+            $product->save();
+        }
+
+        foreach($cartItems as $item){
+            $item->delete();
+        }
+
+        return response()->json([
+            "message" => "All items were deleted from cart",
+            $cartItems
+        ]);
     }
 }
