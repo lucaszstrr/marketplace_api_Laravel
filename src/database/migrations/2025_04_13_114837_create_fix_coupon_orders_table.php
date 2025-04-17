@@ -31,4 +31,4 @@ return new class extends Migration
             $table->foreign('couponId')->references('id')->on('coupons');
         });
     }
-};
+}; 
