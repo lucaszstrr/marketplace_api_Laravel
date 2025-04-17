@@ -10,25 +10,6 @@ use Illuminate\Support\Facades\DB;
 
 class CategoryController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
 
@@ -58,9 +39,6 @@ class CategoryController extends Controller
         ], 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function showAll(Category $category)
     {
         //Pegar a model categoria
@@ -89,23 +67,6 @@ class CategoryController extends Controller
 
     }
 
-    public function createdBy(string $id)
-    {
-
-
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Category $category)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Category $category, string $id)
     {
 
@@ -146,9 +107,6 @@ class CategoryController extends Controller
 
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function delete(Category $category, string $id)
     {
         $userLogged = Auth::user();
@@ -170,10 +128,6 @@ class CategoryController extends Controller
                 "message"=> "Category not found"
             ], 404);
         }
-
-        // return response()->json([
-        //     $validateId
-        // ]);
 
         $categoryName = $validateId->name; 
 
