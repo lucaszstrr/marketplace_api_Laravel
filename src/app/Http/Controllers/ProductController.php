@@ -9,25 +9,6 @@ use Illuminate\Support\Facades\Auth;
 
 class ProductController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $userLogged = Auth::user();
@@ -45,7 +26,8 @@ class ProductController extends Controller
             'categoryId' => 'required | integer',
             'name' => 'required | string',
             'stock' => 'required | integer',
-            'price' => 'required | numeric'
+            'price' => 'required | numeric',
+            'coupon' => 'required | boolean'
         ]);
 
         $foundId = Category::find($product['categoryId'], 'id');
@@ -67,9 +49,6 @@ class ProductController extends Controller
         ]);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show()
     {
         $products = Product::all();
@@ -126,17 +105,6 @@ class ProductController extends Controller
         ],200);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
         $userLogged = Auth::user();
@@ -176,13 +144,5 @@ class ProductController extends Controller
             'message'=> "Product updated succesfully by $userName",
             $product
         ], 200);
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
     }
 }
