@@ -12,25 +12,6 @@ use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $userLogged = Auth::user();
@@ -50,61 +31,39 @@ class OrderController extends Controller
             ]);
         }
 
-        $foundCoupon = Coupon::where('id', $request->couponId)->first();
+        if($request->couponId){
 
-        if(!$foundCoupon){
+            $foundCoupon = Coupon::where('id', $request->couponId)->first();
+
+            if(!$foundCoupon){
+                return response()->json([
+                    "message" => "Invalid coupon"
+                ], 404);
+            }
+
             $order = Order::create([
                 "userId" => $userId,
-                "addressId" => $userAddress['id']
+                "addressId" => $userAddress['id'],
+                "couponId" => $foundCoupon['id']
             ]);
 
             return response()->json([
                 "message" => "Order created",
                 $order
             ]);
-        }
 
+        }
+        
         $order = Order::create([
             "userId" => $userId,
-            "addressId" => $userAddress['id'],
-            "couponId" => $foundCoupon['id']
+            "addressId" => $userAddress['id']
         ]);
 
         return response()->json([
             "message" => "Order created",
             $order
         ]);
-
     }
-
-    public function delete(string $id)
-    {
-        $userLogged = Auth::user();
-
-        $userId = $userLogged->id;
-
-        $order = Order::where('userId', $userId)->get();
-
-        $orderId = [];
-
-        foreach($order as $item){
-            $orderId[] = $item->id;
-        }
-
-        if(!in_array($id, $orderId)){
-            return response()->json([
-                "error" => "Invalid order"
-            ], 401);
-        }
-
-        $order->delete();
-
-        return response()->json([
-            "message" => "Order deleted succesfully",
-            $order
-        ], 200);
-    }
-
 
     public function updateStatus(Request $request, string $id)
     {
@@ -136,9 +95,6 @@ class OrderController extends Controller
         ]);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Order $order)
     {
         $userLogged = Auth::user();
@@ -171,27 +127,31 @@ class OrderController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Order $order)
+    public function delete(string $id)
     {
-        //
-    }
+        $userLogged = Auth::user();
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Order $order)
-    {
-        //
-    }
+        $userId = $userLogged->id;
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Order $order)
-    {
-        //
+        $order = Order::where('userId', $userId)->get();
+
+        $orderId = [];
+
+        foreach($order as $item){
+            $orderId[] = $item->id;
+        }
+
+        if(!in_array($id, $orderId)){
+            return response()->json([
+                "error" => "Invalid order"
+            ], 401);
+        }
+
+        $order->delete();
+
+        return response()->json([
+            "message" => "Order deleted succesfully",
+            $order
+        ], 200);
     }
 }
