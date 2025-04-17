@@ -25,4 +25,4 @@ return new class extends Migration
             $table->boolean('coupon')->default(false);
         });
     }
-};
+}; 
