@@ -6,16 +6,10 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
+use function PHPUnit\Framework\isEmpty;
+
 class AuthController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
     public function login(Request $request){
 
         $validateLogin = $request->validate([
@@ -33,7 +27,6 @@ class AuthController extends Controller
             ]);
         }
 
-        //Aqui e feita uma comparacao da senha que foi passada com a senha do bd
         //O Hash::check verifica se a senha em texto puro bate com a senha hasheada
         if(!Hash::check($request->password, $user->password)){
             return response()->json([
@@ -50,12 +43,8 @@ class AuthController extends Controller
             "user" => $user,
             "token" => $token
         ], 200);
-
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create(Request $request)
     {
         $user = $request->validate([
@@ -70,45 +59,5 @@ class AuthController extends Controller
             'message' => 'User created',
             $user
         ]);
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
     }
 }
