@@ -15,6 +15,7 @@ class Product extends Model
         'stock',
         'price',
         'coupon',
+        'image'
     ];
 
     public function category(){
@@ -24,9 +25,4 @@ class Product extends Model
     public function cartItems(){
         return $this->belongsTo(CartItem::class);
     }
-
-    public function image(){
-        return $this->hasMany(Image::class);
-    }
-
 }
