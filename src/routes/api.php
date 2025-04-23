@@ -75,8 +75,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/coupon', [CouponController::class, 'show']);
         Route::get('/coupon/{id}', [CouponController::class, 'showSpecific']);
         Route::delete('/coupon/{id}', [CouponController::class, 'delete']);
-
-
+        
 });
 
 //AUTH
