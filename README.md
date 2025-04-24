@@ -1,4 +1,4 @@
-# Laravel Project - Motorcycle Shop API
+# 🛒 Marketplace API - Laravel
 
 ## Accessing phpMyAdmin
 
