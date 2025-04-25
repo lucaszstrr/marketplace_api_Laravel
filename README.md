@@ -3,8 +3,8 @@
 A complete e-commerce platform API built with Laravel featuring user management, products, shopping cart, orders, and discount coupons.
 
 ## ✨ Key Features
-JWT Authentication with multi-level access (Admin, Moderator, Customer)
-User Management(admin-only)
+JWT Authentication with multi-level access (Admin, Moderator, Customer) <br />
+User Management(admin-only) <br />
 Address System linked to user accounts
 Product Inventory with stock control
 Shopping Cart with automatic stock reservation
