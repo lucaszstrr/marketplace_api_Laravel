@@ -4,21 +4,34 @@ A complete e-commerce platform API built with Laravel featuring user management,
 
 ## ✨ Key Features
 JWT Authentication with multi-level access (Admin, Moderator, Customer) <br />
+
 User Management(admin-only) <br />
+
 Address System linked to user accounts <br />
+
 Product Inventory with stock control <br />
+
 Shopping Cart with automatic stock reservation <br />
+
 Order Processing with complete workflow <br />
+
 Discount Coupons (admin-only) <br />
+
 Product Categories <br />
 
 ## 🛠️ Tech Stack
 PHP 8.1+ <br />
+
 Laravel 10 <br />
+
 MySQL 5.7+ <br />
+
 Composer 2.8.6 <br />
+
 JWT Authentication <br />
+
 Eloquent ORM <br />
+
 RESTful API <br />
 
 ##  🚀 Installation
