@@ -2,7 +2,7 @@
 
 A complete e-commerce platform API built with Laravel featuring user management, products, shopping cart, orders, and discount coupons.
 
-##✨ Key Features
+## ✨ Key Features
 JWT Authentication with multi-level access (Admin, Moderator, Customer)
 User Management(admin-only)
 Address System linked to user accounts
@@ -12,7 +12,7 @@ Order Processing with complete workflow
 Discount Coupons (admin-only)
 Product Categories
 
-##🛠️ Tech Stack
+## 🛠️ Tech Stack
 PHP 8.1+
 Laravel 10
 MySQL 5.7+
@@ -21,7 +21,7 @@ JWT Authentication
 Eloquent ORM
 RESTful API
 
-##🚀 Installation
+##  🚀 Installation
 1. ***Clone the repository:**
    git clone https://github.com/lucaszstrr/motorcycleShopLaravel.git
 
@@ -57,7 +57,7 @@ RESTful API
    ```
 
 
-##🔐 Roles and Permissions
+## 🔐 Roles and Permissions
 Role	       |      Permissions
 Admin	       |  Full system access
 Moderator	 |  Manage products and categories
@@ -65,7 +65,7 @@ Customer	    |  Basic shopping operations
 
 
 
-##🌟 Unique Features
+## 🌟 Unique Features
 ✅ Automatic Stock Reservation - Items added to cart immediately reserve inventory
 
 ✅ Granular Access Control - Detailed permission hierarchy
