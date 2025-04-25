@@ -5,21 +5,21 @@ A complete e-commerce platform API built with Laravel featuring user management,
 ## ✨ Key Features
 JWT Authentication with multi-level access (Admin, Moderator, Customer) <br />
 User Management(admin-only) <br />
-Address System linked to user accounts
-Product Inventory with stock control
-Shopping Cart with automatic stock reservation
-Order Processing with complete workflow
-Discount Coupons (admin-only)
-Product Categories
+Address System linked to user accounts <br />
+Product Inventory with stock control <br />
+Shopping Cart with automatic stock reservation <br />
+Order Processing with complete workflow <br />
+Discount Coupons (admin-only) <br />
+Product Categories <br />
 
 ## 🛠️ Tech Stack
-PHP 8.1+
-Laravel 10
-MySQL 5.7+
-Composer 2.8.6
-JWT Authentication
-Eloquent ORM
-RESTful API
+PHP 8.1+ <br />
+Laravel 10 <br />
+MySQL 5.7+ <br />
+Composer 2.8.6 <br />
+JWT Authentication <br />
+Eloquent ORM <br />
+RESTful API <br />
 
 ##  🚀 Installation
 1. ***Clone the repository:**
@@ -58,22 +58,22 @@ RESTful API
 
 
 ## 🔐 Roles and Permissions
-Role	       |      Permissions
-Admin	       |  Full system access
-Moderator	 |  Manage products and categories
-Customer	    |  Basic shopping operations
+Role	       |      Permissions <br />
+Admin	       |  Full system access <br />
+Moderator	 |  Manage products and categories <br />
+Customer	    |  Basic shopping operations <br />
 
 
 
 ## 🌟 Unique Features
-✅ Automatic Stock Reservation - Items added to cart immediately reserve inventory
+✅ Automatic Stock Reservation - Items added to cart immediately reserve inventory <br />
 
-✅ Granular Access Control - Detailed permission hierarchy
+✅ Granular Access Control - Detailed permission hierarchy <br />
 
-✅ Coupon System - Create and apply discount codes
+✅ Coupon System - Create and apply discount codes <br />
 
-✅ Real-time Inventory - Stock updates during cart operations
+✅ Real-time Inventory - Stock updates during cart operations <br /> 
 
-✅ Zip Code - validates whether the zip is real or not
+✅ Zip Code - validates whether the zip is real or not <br />
 
 
