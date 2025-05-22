@@ -36,7 +36,7 @@ RESTful API <br />
 
 ##  🚀 Installation
 1. ***Clone the repository:**
-   git clone https://github.com/lucaszstrr/motorcycleShopLaravel.git
+   git clone https://github.com/lucaszstrr/marketplace_api_Laravel
 
 2. **Create the `.env` file:**  
    Copy the contents of the `.env.example` file into a new `.env` file inside the `/src` folder.
